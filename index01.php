@@ -224,6 +224,7 @@ pero de la maquina virtual con linux ya que el codigo se encuentra enlazado con 
 
 Opcional para segunda instancia
 "docker rm -f efdd8570a51a3b7a18deed68f7cc65b3ab1832b10b3742081ab4f9fac8f94f57" eliminar contenedor por id
+"docker rm -f 162332b550313e7be0914a65dc144def821c6e7bbf1b6a06bc60779253d13511 eliminar contenedor por id
 
 CTRL + c despues de un rato corta el servicio
 
@@ -233,4 +234,84 @@ docker ps -a (listar los contenedores)
 docker start billingapp (inicializar contenedor)
 docker logs billingapp (ver logs del contenedor)
 docker stop billingapp (detener el contenedor)
-docker image rm sotobotero/udemy-devops:0.0.1 (eliminar imagen)
+docker image rm -f sotobotero/udemy-devops:0.0.1 (eliminar imagen)
+
+
+############## POSTGRES IMAGEN DE DOCKER HUB ##########
+
+archivo docker-compose.yml
+
+###
+version: '3.1'
+services:
+  db:
+    container_name: postgres
+    image: postgres
+    restart: always    
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: postgres    
+
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: always
+    depends_on: 
+      - db
+    ports:
+       - 9090:8080
+###
+para ejecutar este archivo (nombre definido autodetectable "docker-compose.yml" )
+docker-compose pull
+para ejecutar un archivo con nombre diferente seria
+docker-compose -f stackdb.yml pull
+
+## ATAJOS ##
+vim index.html (crear archivo en vim)
+Presiona la letra i en tu teclado para ingresar el modo INSERT (insertar)
+Cuando termines de editar el archivo, presiona la tecla ESC. Esto te saca del modo INSERT y -- INSERT -- desaparece de la parte inferior izquierda de tu terminal.
+Para guardar el archivo, escribe dos puntos (:) seguido de wq. Por ejemplo :wq!
+
+
+######### OPCIONAL INSTALAR WEBADMIN para gestionar el servidor desde el nevegador en windows de manera remota #########
+
+sudo apt update
+sudo apt install wget apt-transport-https
+wget http://www.webmin.com/download/deb/webmin-current.deb
+sudo dpkg -i webmin-current.deb
+sudo apt --fix-broken install
+https://TU_IP_UBUNTU:10000/
+
+#########################
+
+Nueva carpeta
+mkdir $nombre_carpeta
+crear archivo
+vim index.html
+visualizar contenido
+cat index.html
+
+para buscarlo en el filemanager de webadmin tenemos que situarnos en:
+home/osboxes/nueva_carpeta
+
+###########################
+
+continuando despues del pull
+podemos realizar un
+docker image ls (para verificar las imagenes descargadas)
+
+docker compose -f stackdb.yml up -d (en caso de que el archivo tenga otro nombre)
+docker compose up -d
+
+al ingresar en el sistema linux por localhost:9090 podremos ingresar al adminer
+
+se logro ingresar al sitio remotamente solo colocando http://192.168.1.45:9090/
+
+tipo de BD postgres
+usuario postgres
+clave qwerty
+BD postgres
+(todo esto definido en el archivo yml)
