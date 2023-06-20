@@ -175,3 +175,62 @@ Enter new UNIX username:
 ///////////////
 
 ingresar usuario y contraseña
+
+
+########## DOCKER HUB DESKTOP ######## OPCIONAL NO SE USARA EN EL CURSO NI EN ENTORNO EMPRESARIAL
+
+https://docs.docker.com/desktop/install/windows-install/
+dice que el kernel se instala primero
+https://learn.microsoft.com/es-es/windows/wsl/install-manual#step-4---download-the-linux-kernel-update-package
+(Paquete de actualización del kernel de Linux en WSL 2 para máquinas x64)
+
+cuando inicie la pc va a pedir aceptar los terminos y condiciones de docker hub
+
+configuración => kubernetes => activar las 2 casillas (instalar el componente que te píde) volver a realizarlo y poner aplicar
+y reiniciar
+
+una vez instalado ejecutar en powershell
+
+ docker --version
+ docker-compose version
+
+ avisa que no es necesario instalar un SO de linux para utilizar estas tecnologias
+
+ docker runh -d -p 80:80 docker/gettin-started
+
+
+ ############## FIN OPCIONAL
+
+testear en putty funcionalidad de docker en linux
+docker run hello-world
+
+ir al docker hub "https://hub.docker.com/r/sotobotero/udemy-devops/"
+
+y pegar el siguiente comando
+
+docker pull sotobotero/udemy-devops:0.0.1
+
+inicializar contenedor a partir de una imagen
+
+docker run -p 80:80 -p  8080:8080 --name billingapp sotobotero/udemy-devops:0.0.1
+
+-- "80:80 -p  8080:8080" puertos necesarios, 80 es angular y 8080 para el microservicio
+-- "billingapp" nombre contenedor
+
+
+ingresaremos al compilado localhost:80 
+al igual que el panel localhost:8080/swagger-ui/index.html => admin admin
+pero de la maquina virtual con linux ya que el codigo se encuentra enlazado con el ip nat
+
+Opcional para segunda instancia
+"docker rm -f efdd8570a51a3b7a18deed68f7cc65b3ab1832b10b3742081ab4f9fac8f94f57" eliminar contenedor por id
+
+CTRL + c despues de un rato corta el servicio
+
+
+docker image ls (listar imagenes)
+docker ps -a (listar los contenedores)
+docker start billingapp (inicializar contenedor)
+docker logs billingapp (ver logs del contenedor)
+docker stop billingapp (detener el contenedor)
+docker image rm sotobotero/udemy-devops:0.0.1 (eliminar imagen)
