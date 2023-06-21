@@ -344,3 +344,15 @@ docker image tag sotobotero/udemy-devops:0.0.1 braianzamudio/devops01:latest
 -- docker image tag billingapp:prod devops01:0.0.1
 
 docker hub "docker push braianzamudio/devops01:l" (al parecer se creo con la etiqueta l)
+
+
+
+######### DOCKER #######
+
+DOCKER: sirve para levantar imagenes, crear contenedores y ejecutar aplicaciones (usa los dockerfile)
+DOCKER COMPOSE (orquestador de contenedores): es un sistema auxiliar a lo que seria el docker base, orquestador que permite definir servicios que requieren multiples contenedores, multiples imagenes que requieren estar dentro de una misma red y permiten utilizarlos de una manera mas sencilla (usa los docker-compose.yml)
+
+###### VOLUMENES ######
+
+la creación de contenedores puede utilizar el disco por fuera de los contenedores, esto se realiza para poder eliminar el contenedor y no perder la información. Por ejemplo si estamos trabajando con una imagen que tiene una base de datos esta misma la podemos recrear la cantidad de veces que querramos y no se perdera la información que estemos guardando.
+Esto lo aclaramos por que al recrear un contenedor necesitamos que el volumen se recree nuevamente ya que el creado no es funcional necesitamos verificar el directorio del volumen y eliminarlo manualmente ya que el generador de contenedores verifica que si existe no sera eliminado.
