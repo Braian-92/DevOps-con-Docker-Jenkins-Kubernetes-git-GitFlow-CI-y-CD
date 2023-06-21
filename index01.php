@@ -315,3 +315,32 @@ usuario postgres
 clave qwerty
 BD postgres
 (todo esto definido en el archivo yml)
+
+pegar los archivos en el sistema linux
+
+-- (eliminado) archivos/billingApp (sin el dockerfile y el stackdb.yml)
+
+ls -la (visualizar contenido de carpeta con detalle de accesos)
+
+docker build -t billingapp:prod --no-cache --build-arg JAR_FILE=target/*.jar .
+
+cuando finalice ingresar directamente sin puerto "192.168.1.45"
+
+
+####### LOGIN DOCKER HUB ############
+hay que ingresar a docker hub y te indica que comando utilizar para conectarte
+cuando en seguridad se crea un tocken para ingresar
+PD: aunque mi usuario sea BraianZamudio me pide que ingrese con todo en minuscula
+
+docker login -u braianzamudio -p __TOKEN__ (funcional)
+
+docker push __NOMBRE_CONTENEDOR_:_ETIQUETA_
+docker push __NOMBRE_CONTENEDOR_:_ETIQUETA_
+
+docker push sotobotero/udemy-devops:0.0.1 (no funciono dice denegado)
+
+-- vamos a clonar la imagen para intentar enviarla con el pull que recomienda 
+docker image tag sotobotero/udemy-devops:0.0.1 braianzamudio/devops01:latest
+-- docker image tag billingapp:prod devops01:0.0.1
+
+docker hub "docker push braianzamudio/devops01:l" (al parecer se creo con la etiqueta l)
