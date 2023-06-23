@@ -502,3 +502,30 @@ docker stats (igual que docker compose)
 
 docker stack rm billing (remover los servicios)
 docker swarm leave --force (desactiva swarm)
+
+########### ESCALABILIDAD Y CLUSTERIZADO ###########
+
+Escalabilidad vertical = tener un nodo (servidor) y sumarle recursos al servidor (compara ram y micros)
+Escalabilidad horizontal = tener varios nodos conectador por red y que trabajen como uno
+Cluster = grupo de nodos (para aplicar el método horiontal en este caso)
+
+
+
+######### KUBERNETES ###################################
+######### KUBERNETES ###################################
+
+Principales objetos de Kubernetes
+
+Pods: Unidad mas pequeña que se puede desplegar y gestionar en kubernetes. Es un grupo de uno o mas contenedores que comparten almacenamiento y red y especificaciones de como ejecutarse. Son efimeros.
+-- EFIMERO : en aplicaciónes significa que si una aplicación falla esta se puede recrear nuevamente. Para evitar perdida de información de los usuarios
+
+Deployments: Describe es estado deseado de una implementación, ejecuta múltiples replicas de la aplicación, remplaza las que estan defectuosas o no responden.
+
+Services: Definición de como se va a exponer una aplicación que se ejecuta en un conjunto de pods como un servicio de red (por defecto se usa roud-robin para el balanceo de carga).
+
+Config Map: Permite desacoplar la configuración para hacer las imagenes mas portables, almacenan las variables de entorno, argumentos para línea de comandos, o configuración de volúmenes que pueden consumir los pods (no encriptación).
+
+Labels: Pares de clave valor ("enviroment" : "qa") para organizar, seleccionar, consultar y monitorear objetos de forma mas eficiente, ideales para UI y CLIs.
+
+Selectores: Mecanismos para hacer consultas a las etiquetas. 
+  -> kubectl get pods -l 'enviroment (production), tier in (frontend)''
