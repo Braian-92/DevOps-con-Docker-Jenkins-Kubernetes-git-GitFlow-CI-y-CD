@@ -352,12 +352,14 @@ docker hub "docker push braianzamudio/devops01:l" (al parecer se creo con la eti
 DOCKER: sirve para levantar imagenes, crear contenedores y ejecutar aplicaciones (usa los dockerfile)
 DOCKER COMPOSE (orquestador de contenedores): es un sistema auxiliar a lo que seria el docker base, orquestador que permite definir servicios que requieren multiples contenedores, multiples imagenes que requieren estar dentro de una misma red y permiten utilizarlos de una manera mas sencilla (usa los docker-compose.yml)
 
-###### VOLUMENES ######
+###### VOLUMENES PERSISTENTES ######
 
 la creación de contenedores puede utilizar el disco por fuera de los contenedores, esto se realiza para poder eliminar el contenedor y no perder la información. Por ejemplo si estamos trabajando con una imagen que tiene una base de datos esta misma la podemos recrear la cantidad de veces que querramos y no se perdera la información que estemos guardando.
 Esto lo aclaramos por que al recrear un contenedor necesitamos que el volumen se recree nuevamente ya que el creado no es funcional necesitamos verificar el directorio del volumen y eliminarlo manualmente ya que el generador de contenedores verifica que si existe no sera eliminado.
 
 ######### PROYECTO 02 docker java angular postgres #########
+######### PROYECTO 02 docker java angular postgres #########
+
 docker ps -a (listar contenedores)
 docker system prune (eliminar todos los contenedores)
 docker image ls (listar las imagenes)
@@ -387,3 +389,98 @@ docker compose -f stack-billing.yml stop
 ######## MONITORES FISICOS ########
 
 docker stats (muestra un administrador de tareas)
+CTRL + C para detener el comando "docker stats"
+
+########
+#Billin app frontend service
+  billingapp-front:
+    build:
+      context: ./angular 
+    deploy:   
+        resources:
+           limits: 
+              cpus: "0.15"
+              memory: 250M
+#recusos dedicados, mantiene los recursos disponibles del host para el contenedor
+           reservations:
+              cpus: "0.1"
+              memory: 128M
+    #container_name: billingApp-front
+    depends_on:     
+      - billingapp-back
+#rango de puertos para escalar    
+    ports:
+      - 80:80 
+#########
+
+en el caso actual vamos a restringir el consumo de un servicio agregando el fragmento en deploy, esto limitara solo el contenedor seleccionado
+
+######## PROYECTO 3 ENTORNOS MULTIPLES CON REDES VIRTUALES SIMULTANEAS ##########
+######## PROYECTO 3 ENTORNOS MULTIPLES CON REDES VIRTUALES SIMULTANEAS ##########
+
+docker stop $(docker ps -a -q)       (detener todos los contenedores)
+docker system prune --all        (eliminar todos los contenedores, volumenes, redes) (al parecer que esten apagados)
+
+pasar los archivos de la carpeta archivos/billingApp_v3 al servidor linux
+dar un cd al directorio
+
+docker compose -f stack-billing.yml up -d --force-recreate (force recreate es por si tenia una imagen o contenedor existente lo vuelve a recrear)
+
+#######
+networks:
+  env_prod:
+    driver: bridge  
+    #activate ipv6
+    driver_opts: 
+            com.docker.network.enable_ipv6: "true"
+    #IP Adress Manager
+    ipam: 
+        driver: default
+        config:
+        - 
+          subnet: 172.16.232.0/24
+          gateway: 172.16.232.1
+        - 
+          subnet: "2001:3974:3979::/64"
+          gateway: "2001:3974:3979::1"
+
+
+  env_prep:   
+    driver: bridge  
+    #activate ipv6
+    driver_opts: 
+            com.docker.network.enable_ipv6: "true"
+    #IP Adress Manager
+    ipam:
+        driver: default
+        config:
+        - 
+          subnet: 172.16.235.0/24
+          gateway: 172.16.235.1
+        - 
+          subnet: "2001:3984:3989::/64"
+          gateway: "2001:3984:3989::1"
+#######
+este es un fragmento den yml que habla de lo nuevo que se esta agregando "networks"
+son redes indistintas que permiten crear en este caso 2 ambientes simultaneos que trabajen de manera independiente 
+
+en cada servisio hay que seleccionar el deseado de esta manera
+
+####
+networks:
+     - env_prod
+####
+
+recordar que el archivo completo se encuenta en: archivos/billingApp_v3/stack-billing.yml
+
+docker ps -a (visualizar si todos los contenedores se crearon)
+
+docker logs $NOMBRECONTENEDOR (visualizar si salen errores)
+
+ahora vemos que al ingresar en localhost:80 y localhost:81 se abren los diferentes ambientes indistintos
+y en el localhost:9090 podemos acceder al adminer de ambas redes, con el solo echo de cambiar el "SERVER"
+
+
+
+
+############ DOCKER SWARM #############
