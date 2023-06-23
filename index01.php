@@ -484,3 +484,21 @@ y en el localhost:9090 podemos acceder al adminer de ambas redes, con el solo ec
 
 
 ############ DOCKER SWARM #############
+
+docker info
+
+si vemos dice que docker swarm esta inactivo
+
+docker swarm init (activar el swarm)
+verificar el "Node Address" para saber que ip utilizar ya que a partir de este metodo el localhost no funciona
+
+
+docker stack deploy -c stack-billing.yml billing
+
+en docker swarm los contenedores se conocen como stack y se tiene que poner un prefijo para que nombre a las dependencias "billing"
+docker service ls (muestra los servicios del stack)
+docker stack ps $NOMBRESTACK           /PREFIJO("billing")    (ver detalles de un stack) lo muestra a modo contenedor
+docker stats (igual que docker compose)
+
+docker stack rm billing (remover los servicios)
+docker swarm leave --force (desactiva swarm)
