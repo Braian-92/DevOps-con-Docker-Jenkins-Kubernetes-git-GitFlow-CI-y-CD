@@ -356,3 +356,34 @@ DOCKER COMPOSE (orquestador de contenedores): es un sistema auxiliar a lo que se
 
 la creación de contenedores puede utilizar el disco por fuera de los contenedores, esto se realiza para poder eliminar el contenedor y no perder la información. Por ejemplo si estamos trabajando con una imagen que tiene una base de datos esta misma la podemos recrear la cantidad de veces que querramos y no se perdera la información que estemos guardando.
 Esto lo aclaramos por que al recrear un contenedor necesitamos que el volumen se recree nuevamente ya que el creado no es funcional necesitamos verificar el directorio del volumen y eliminarlo manualmente ya que el generador de contenedores verifica que si existe no sera eliminado.
+
+######### PROYECTO 02 docker java angular postgres #########
+docker ps -a (listar contenedores)
+docker system prune (eliminar todos los contenedores)
+docker image ls (listar las imagenes)
+docker image prune (eliminar todas las imagenes)
+docker volume ls (visualizar los volumenes generados)
+docker image prune -a (eliminar todos los volumene)
+docker compose stop (se detuvieron los contenedores para poder eliminarlos con el prune)
+
+pegar los archivos de la carpeta "archivos/billingApp_v2" en el servidor y tirar un cd al directorio
+recrear el yml
+docker compose -f stack-billing.yml build
+docker compose -f stack-billing.yml up -d (para prender el contenedor en background)
+
+docker ps -a (para verificar que esten activas)
+
+ya el servicio es accesible desde localhost:80 dentro de la maquina virtual
+
+localhost:9090 como tambien del 192.168.1.45:9090 para entrar al adminer en la BD billingapp_db
+
+SERVIDOR postgres_db
+USUARIO postgres
+CLAVE qwerty
+BD postgres
+
+docker compose -f stack-billing.yml stop
+
+######## MONITORES FISICOS ########
+
+docker stats (muestra un administrador de tareas)
