@@ -528,4 +528,23 @@ Config Map: Permite desacoplar la configuración para hacer las imagenes mas por
 Labels: Pares de clave valor ("enviroment" : "qa") para organizar, seleccionar, consultar y monitorear objetos de forma mas eficiente, ideales para UI y CLIs.
 
 Selectores: Mecanismos para hacer consultas a las etiquetas. 
-  -> kubectl get pods -l 'enviroment (production), tier in (frontend)''
+  -> kubectl get pods -l 'enviroment (production), tier in (frontend)'
+
+
+sudo apt-get install grep (opcional instalar grep)
+
+###### instalar kubectl #########
+https://k8s-docs.netlify.app/en/docs/tasks/tools/install-kubectl/
+
+curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+
+chmod +x ./kubectl (dar permisos)
+sudo mv ./kubectl /usr/local/bin/kubectl (moverlo a los binarios)
+kubectl version --client (verificar version instalada del kubectl)
+
+######### SALIDA el warning no importa es solo por como se lo consulto
+WARNING: This version information is deprecated and will be replaced with the output from kubectl version --short.  Use --output=yaml|json to get the full version.
+Client Version: version.Info{Major:"1", Minor:"27", GitVersion:"v1.27.3", GitCommit:"25b4e43193bcda6c7328a6d147b1fb73a33f1598", GitTreeState:"clean", BuildDate:"2023-06-14T09:53:42Z", GoVersion:"go1.20.5", Compiler:"gc", Platform:"linux/amd64"}
+Kustomize Version: v5.0.1
+
+#########
