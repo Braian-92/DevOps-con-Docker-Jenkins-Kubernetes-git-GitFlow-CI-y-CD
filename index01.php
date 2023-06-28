@@ -728,3 +728,59 @@ CONNECTION
   PASSWORD => qwerty
 ### SALVAR ###  
 (las credenciales se definieron en "secret-dev.yaml")
+
+
+aqui encontraremos la base de datos que se creo con el archivo "configmap-postgres-initbd.yaml"
+
+### OPCIONAL podemos ingresar a la base de datos con la ip interna del cluster
+
+kubectl delete -f ./ (eliminar de kubernete todas las definiciones creadas anteriormente)
+
+docker ps -a (visualizar todos los contenedores de docker)
+docker exec -it minikube /bin/bash (bin/bash es para conectarnos a la consola)
+ls -la/mnt/data/ (para visualizar que los volumenes persistentes aun se encuentran en el contenedor)
+exit (salir del cluster)
+
+##### METODO MASIVO ######
+
+kubectl apply -f ./ (recrea todo lo que se encuentre en la carpeta ".yaml")
+
+
+################################################
+
+####### ORQUESTACIÓN DE SERVICIO DE FACTURACIÓN ########
+
+minikube docker-env (generar todas las variables necesarias para que el engine apunte a los registros del minikube)
+eval $(minikube -p minikube docker-env)             (aplicar configuración)
+
+subir los archivos de la carpeta "archivos/devops2/billingApp_images_v4"
+vamos a dejar todos estos archivos en "home/osboxes/kubernetes/devops2/billingApp_images_v4"
+subir los archivos en .zip
+
+cd $HOME
+cd kubernetes
+mkdir devops2
+cd devops2/billingApp_images_v4
+ls
+cd java
+
+docker build -t billingapp-back:0.0.4 --no-cache --build-arg JAR_FILE=./*.jar . 
+(genera la imagen de java de los archivos que subimos)
+
+cd ..
+cd angular
+docker build -t billingapp-front:0.0.4 --no-cache .  (genera la imagen de ngix para angular)
+docker image ls (visualizar las imagenes creadas)
+
+########### SALIDA "docker image ls"
+REPOSITORY                    TAG       IMAGE ID       CREATED          SIZE
+billingapp-front              0.0.4     f9e78981327e   10 seconds ago   48MB
+billingapp-back               0.0.4     2f05cada1aef   5 minutes ago    458MB
+hello-world                   latest    9c7a54a9a43c   7 weeks ago      13.3kB
+gcr.io/k8s-minikube/kicbase   v0.0.39   67a4b1138d2d   2 months ago     1.05GB
+###########
+
+subir los archivos de la carpeta "archivos/devops2/billingApp"
+vamos a dejar todos estos archivos en "home/osboxes/kubernetes/devops2/billingApp"
+
+a diferencia del proyecto anterior esta tiene unas ips estaticas para que podamos acceder siempre entre los servicios 
