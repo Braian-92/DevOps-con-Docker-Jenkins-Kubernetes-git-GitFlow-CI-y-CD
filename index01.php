@@ -547,4 +547,63 @@ WARNING: This version information is deprecated and will be replaced with the ou
 Client Version: version.Info{Major:"1", Minor:"27", GitVersion:"v1.27.3", GitCommit:"25b4e43193bcda6c7328a6d147b1fb73a33f1598", GitTreeState:"clean", BuildDate:"2023-06-14T09:53:42Z", GoVersion:"go1.20.5", Compiler:"gc", Platform:"linux/amd64"}
 Kustomize Version: v5.0.1
 
-#########
+######### INSTALAR Minikube  ###############
+
+https://k8s-docs.netlify.app/en/docs/tasks/tools/install-minikube/
+
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 \
+  && chmod +x minikube
+
+sudo mkdir -p /usr/local/bin/
+sudo install minikube /usr/local/bin/
+
+minikube start
+
+docker ps -a (para visualizar que el contenedor de minikube esta corriendo)
+
+minikube status
+
+minikube stop (para detener)
+minikube dashboard --url (lanzar el dashboard)
+
+
+############## FALLOS ############
+
+el dashboard no funcionaba con la ip nat y con la ip local de la red accediendo desde windows
+se realizo utilizar como virtualizador el metodo de driver por docker virtual box y nada funciono
+se verifico en internet y es una problematica que muchos tienen
+
+"http://127.0.0.1:44535/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/"
+
+http://127.0.0.1:46035/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
+
+
+! Exiting due to GUEST_DRIVER_MISMATCH: The existing "minikube" cluster was created using the "docker" driver, which is incompatible with requested "virtualbox" driver.
+* Suggestion: Delete the existing 'minikube' cluster using: 'minikube delete', or start the existing 'minikube' cluster using: 'minikube start --driver=docker'
+
+
+Exiting due to PROVIDER_VIRTUALBOX_NOT_FOUND: The 'virtualbox' provider was not found: unable to find VBoxManage in $PATH
+* Suggestion: Install VirtualBox
+* Documentation: https://minikube.sigs.k8s.io/docs/reference/drivers/virtualbox/
+
+lsb_release -a (saber la versión de ubuntu)
+
+
+minikube start --driver=docker
+
+https://github.com/kubernetes/minikube/issues/3900
+  - https://github.com/kubernetes/minikube/issues/4730
+
+https://www.shellhacks.com/install-minikube-on-ubuntu-virtualbox/
+
+######## UBUNTU EN VMWARE ###########
+
+https://www.osboxes.org/ubuntu/#ubuntu-22-10-vmware
+https://www.youtube.com/watch?v=I6WfFLQwoPg&t=53s
+
+hay que instalar el ubuntu sin imagen iso y luego utilizar la descargada como disco existente
+
+https://www.youtube.com/watch?v=zVPk-HwNVkA
+poner la placa de red en modo bridge para mantener la ip de la red y acceder desde putty
+
+#####################################################
