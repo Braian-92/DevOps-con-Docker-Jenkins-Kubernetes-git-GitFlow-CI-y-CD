@@ -677,3 +677,54 @@ data:
 Pasamos a dejar los archivos yaml en la carpeta para tenerlos listos para subir (en esta docu)
 
 archivos\devops
+
+pasamos a subir los archivos yaml a el servisor usando el webadmin en una carpeta especifica par trabajar
+kubernetes/devops
+
+mkdir kubernetes
+cd kubernetes
+mkdir devops
+
+buscarlo en webadmin como "home/osboxes/kubernetes/devops"
+
+si tiramos un "ls" veremos los archivos en la consola
+
+para lanzarlos uno a uno
+
+kubectl apply -f secret-dev.yaml (salida => secret/postgres-secret created)
+kubectl apply -f secret-pgadmin.yaml
+kubectl apply -f configmap-postgres-initbd.yaml
+kubectl apply -f persistence-volume.yaml
+kubectl apply -f persistence-volume-claim.yaml
+kubectl apply -f deployment-postgres.yaml
+kubectl apply -f deployment-pgadmin.yaml
+kubectl apply -f service-postgres.yaml
+kubectl apply -f service-pgadmin.yaml
+
+para visualizar todos los módulos que activamos podemos utilizar
+
+kubectl get all
+o solamente visualizar los pods
+kubectl get pods
+
+minikube ip (para sacar la ip del cluster de minikube) 192.168.49.2
+por ejemplo para el pgadmin sumarle el puerto "30200"
+192.168.49.2:30200
+credenciales del pgadmin
+admin@admin.com | qwerty
+(estas credenciales se colocaron en el secret de pgadmin  "secret-pgadmin.yaml")
+
+volvemos a la consola y sacamos el puerto del sevicio de postgres "30432"
+192.168.49.2:30432
+
+y agregamos un servidor
+GENERAL
+  NAME => postgresservice
+CONNECTION
+  HOST => 192.168.49.2
+  PORT => 30432
+  DATABASE => postgres
+  USERNAME => postgres
+  PASSWORD => qwerty
+### SALVAR ###  
+(las credenciales se definieron en "secret-dev.yaml")
