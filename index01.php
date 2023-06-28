@@ -607,3 +607,73 @@ https://www.youtube.com/watch?v=zVPk-HwNVkA
 poner la placa de red en modo bridge para mantener la ip de la red y acceder desde putty
 
 #####################################################
+
+
+## Crear un por a partir de una imagen de docker ##
+
+esto sale del repo de : https://hub.docker.com/r/sotobotero/udemy-devops/tags
+kubectl run kbillingapp --image=sotobotero/udemy-devops:0.0.1 --port=80 80 (crear pods)
+// SALIDA "pod/kbillingapp created"
+
+kubectl get pods
+
+kubectl describe pod kbillingapp
+
+kubectl expose pod kbillingapp --type=LoadBalancer --port=8080 --target-port=80
+
+// SALIDA // "service/kbillingapp exposed"
+
+kubectl get services (visualiza los servicios activos)
+kubectl describe service kbillingapp
+minikube service --url kbillingapp
+// SALUDA // "http://192.168.49.2:31448/" se abre dentro del ubuntu
+
+
+############ PROYECTO CON MULTISERVICIOS ##########
+
+echo -n "postgres" | base64     (salida => cG9zdGdyZXM=) [lo conveirte en base 64]
+echo -n "qwerty" | base64 (cXdlcnR5)
+echo "cG9zdGdyZXM=" | base64 -d [decodifica base64]
+
+
+####### POD postgres #########
+secret-dev.yaml
+
+#####
+#object that store enviroments variables that could ba have sensitive data like a password
+apiVersion: V1
+kind: Secret
+metadata:
+  name: postgres-secret
+  labels:
+    app: postgres
+    #meant that we can use arbitrary key pair values
+type: Opaque
+data:
+  POSTRGRES_DB: cG9zdGdyZXM=
+  POSTRGRES_USER: cG9zdGdyZXM=
+  POSTRGRES_PASSWORD: cXdlcnR5
+#####
+
+####### POD pgadmin #########
+secret-pgadmin.yaml
+
+#####
+#object that store enviroments variables that could be have sensitive data like a password
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pgadmin-secret
+  labels:
+    app: postgres
+    #meant that we can use arbitrary key pair values
+type: Opaque
+data:
+  PGADMIN_DEFAULT_EMAIL: YWRtaW5AYWRtaW4uY29t
+  PGADMIN_DEFAULT_PASSWORD: cXdlcnR5
+  PGADMIN_PORT: ODA=
+#####
+
+Pasamos a dejar los archivos yaml en la carpeta para tenerlos listos para subir (en esta docu)
+
+archivos\devops
