@@ -784,3 +784,22 @@ subir los archivos de la carpeta "archivos/devops2/billingApp"
 vamos a dejar todos estos archivos en "home/osboxes/kubernetes/devops2/billingApp"
 
 a diferencia del proyecto anterior esta tiene unas ips estaticas para que podamos acceder siempre entre los servicios 
+
+cd ..
+cd ..
+cd billingApp
+ls
+kubectl apply -f ./
+kubectl get all (visualizar todos los módulos cargados "archivos .yaml")
+minikube ip ("192.168.49.2")
+puerto del servicio front "30100" (se visualiza en el comando "kubectl get all")
+////// de aca sacamos el puerto
+"service/billing-app-front-service   NodePort       10.98.134.65    <none>        80:30100/TCP     30s"
+////// FIN de aca sacamos el puerto
+
+192.168.49.2:30100
+
+######## REVISAR DESPUES DE HACER BACKUP SI CON ESTE METODO PUEDO ABRIR LOS PUERTROS PARA ACCEDER DESDE WIN ##
+https://www.serverpronto.com/accounts/knowledgebase/11/OpenorClose-Ports-on-Ubuntu-distributions.html?gclid=CjwKCAjwkeqkBhAnEiwA5U-uM4tMSLxfynDMmXNaPlkmO8qkxz0MbdAcCoS6V3MiF92Eycyd1Z-mmBoCqzgQAvD_BwE
+##################################
+
