@@ -803,3 +803,70 @@ puerto del servicio front "30100" (se visualiza en el comando "kubectl get all")
 https://www.serverpronto.com/accounts/knowledgebase/11/OpenorClose-Ports-on-Ubuntu-distributions.html?gclid=CjwKCAjwkeqkBhAnEiwA5U-uM4tMSLxfynDMmXNaPlkmO8qkxz0MbdAcCoS6V3MiF92Eycyd1Z-mmBoCqzgQAvD_BwE
 ##################################
 
+#########################################
+
+GIT: es un sistema de control de versiones
+y esto se conecta con un repositorio de código centralizado (bitbuket, github, gitlab)
+
+metodologias = TRUNK-BASED y GITFLOW
+
+git --version (si aparece instalada no hacer nada)
+## si no se encuentra instalada ##
+apt-get update
+apt-get install git
+###############
+
+git config --global user.name "Udemy prueba"
+git config --global user.email "braian@braianzamudio.com"
+git config --list
+
+############### generar tocken en github ###############
+perfil => settings => developer settings => personal access tockens => classic
+generate new tocken clasic => validar con el celular
+NOTE => tocken devops2 => todos los permisos chequeables
+############################################################
+
+ejemplo clonar repo
+git clone https://github.com/usuario/repo.git
+
+################
+
+crear repo para comando de git
+mkdir practice-trunk-based
+cd practice-trunk-based
+git init
+agregar el archivo README.txt en la carpeta
+git add . (agrega todos los archivos al control de versiones)
+git commit -m "se inicializa el repositorio con el archivo readme"
+git branch (mostrar rama)
+
+########## dentro del sitio de github #########
+
+crear una rama privada el cual te dara el siguiente mensaje
+
+######
+echo "# repo-devops2" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/usuario/repositorio
+git push -u origin main
+######
+
+(y pegar esta linea para sincronizar el repo con la carpeta)
+git remote add origin https://github.com/usuario/repositorio
+git push -u origin master
+
+colocar usuario y contraseña de github (la que usamos para el sitio oficial)
+
+git branch feature/cs-2356847 master (crear una nueva rama)
+git branch (nos salen ambas ramas [el asterisco señala donde estamos])
+git checkout feature/cs-2356847
+agregar a la el directorio la carpeta del microservicio "testgit/billing"
+git add .
+git commit -m "se agrega el código fuente del servicio de facturación"
+git push -u origin feature/cs-2356847
+git pull origin master (actualizar la rama con la master)
+git add .
+git commit -m "se actualiza con lo ultimo que hay en la rama master"
