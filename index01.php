@@ -870,3 +870,10 @@ git push -u origin feature/cs-2356847
 git pull origin master (actualizar la rama con la master)
 git add .
 git commit -m "se actualiza con lo ultimo que hay en la rama master"
+git pull -u origin feature/cs-2356847
+
+#############################################################################
+#############################################################################
+CI/CD => integración continua/entrega o implementación continuas
+Inregración continua: automatizar la gestion de los cambios que envian los multiples contribuidores en un unico proyecto de sofware
+Entrega continua: pasar a productivo los cambios
