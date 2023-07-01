@@ -48,7 +48,7 @@ sudo nano /etc/docker/daemon.json
   }
 }
 
-apretamos control + x, (luego enter)
+apretamos control + x, y,  (luego enter)
 
 cat /etc/docker/daemon.json (visualizar)
 
@@ -70,3 +70,24 @@ curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/miniku
 
 sudo mkdir -p /usr/local/bin/
 sudo install minikube /usr/local/bin/
+
+minikube start
+
+docker ps -a (para visualizar que el contenedor de minikube esta corriendo)
+
+minikube status
+
+[opcional]minikube stop (para detener)
+minikube dashboard --url (lanzar el dashboard)
+
+
+
+git --version (si aparece instalada no hacer nada)
+## si no se encuentra instalada ##
+apt-get update
+apt-get install git
+###############
+
+git config --global user.name "Udemy prueba"
+git config --global user.email "braian@braianzamudio.com"
+git config --list
