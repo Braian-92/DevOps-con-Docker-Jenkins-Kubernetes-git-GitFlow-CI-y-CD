@@ -79,6 +79,7 @@ minikube status
 
 [opcional]minikube stop (para detener)
 minikube dashboard --url (lanzar el dashboard)
+(esta funcionalidad arranco al tirar todos los comandos anteriores desde la consola de ubunto dentro del sistema operativo a comparación de las otras 2 veces anteriores que realice todo por putty, la maquina virtual en este caso se realizo con una red de tipo bridge)
 
 
 
