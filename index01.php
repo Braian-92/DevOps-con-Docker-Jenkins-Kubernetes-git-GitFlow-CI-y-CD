@@ -834,7 +834,7 @@ git clone https://github.com/usuario/repo.git
 crear repo para comando de git
 mkdir practice-trunk-based
 cd practice-trunk-based
-git init
+git init / git -c init.defaultBranch=master init (2 metodos diferentes)
 agregar el archivo README.txt en la carpeta
 git add . (agrega todos los archivos al control de versiones)
 git commit -m "se inicializa el repositorio con el archivo readme"
@@ -858,7 +858,7 @@ git push -u origin main
 git remote add origin https://github.com/usuario/repositorio
 git push -u origin master
 
-colocar usuario y contraseña de github (la que usamos para el sitio oficial)
+colocar usuario y contraseña de github (el nombre del tocken y el tocken)
 
 git branch feature/cs-2356847 master (crear una nueva rama)
 git branch (nos salen ambas ramas [el asterisco señala donde estamos])
@@ -870,10 +870,75 @@ git push -u origin feature/cs-2356847
 git pull origin master (actualizar la rama con la master)
 git add .
 git commit -m "se actualiza con lo ultimo que hay en la rama master"
-git pull -u origin feature/cs-2356847
+git pull -u origin feature/cs-2356847 ( me da un error en el comando "u")
 
 #############################################################################
 #############################################################################
 CI/CD => integración continua/entrega o implementación continuas
 Inregración continua: automatizar la gestion de los cambios que envian los multiples contribuidores en un unico proyecto de sofware
 Entrega continua: pasar a productivo los cambios
+
+
+Pipeline: Grupo logico de actividades que de manera conjunta realizan una tarea
+Jenkins: Servidor de automatización open source
+Slark: Plataforma propietaria de comunicación empresarial (Caracteristica mas relevante channel)
+SonarQube: Plataforma opensource para la implementación continua de la calidad del código, puede ejecutar revisiones en automático.
+Selenium: Framework para probar aplicaciónes web, permite escribir test funcionales de manera sensilla.
+
+
+############ JENKINS ####################
+
+buscar la imagen de dockerhub
+https://hub.docker.com/r/jenkins/jenkins
+
+(no ejecutar)docker pull jenkins/jenkins (guardar este link para crear un dockerfile, y de esta manera extender a MAVEN)
+
+mover el archivo Dockerfile al servidor dentro de una carpeta "devops/jenkins", este docker file contenda el comando de la imagen de jenkis y ademas complementara instalando maven
+ls -la (visualizar contenido de la carpeta)
+docker build -t jenkins-cicd --no-cache . (el punto es el contexto de donde va a encontrar el dockerfile)
+
+
+######### NO FUNCIONO MAVEN ############# (FUNCIONO EL FIX)
+como no funcionao buscamos la imagen de maven en este sitio
+https://maven.apache.org/download.cgi
+
+para cambiar este fragmento
+"RUN  wget --no-verbose https://dlcdn.apache.org/maven/maven-3/3.9.3/binaries/apache-maven-3.9.3-bin.tar.gz -P /tmp/"
+y las demas referencias de la version "3.9.3"
+
+######
+FROM jenkins/jenkins
+USER root
+
+#Update Base OS and install additional tools
+RUN apt-get update && apt-get install -y wget
+RUN  wget --no-verbose https://dlcdn.apache.org/maven/maven-3/3.9.3/binaries/apache-maven-3.9.3-bin.tar.gz -P /tmp/
+RUN tar xzf /tmp/apache-maven-3.9.3-bin.tar.gz -C /opt/ 
+RUN ln -s  /opt/apache-maven-3.9.3 /opt/maven 
+RUN ln -s /opt/maven/bin/mvn /usr/local/bin 
+RUN rm /tmp/apache-maven-3.9.3-bin.tar.gz 
+
+#Set up permissions
+RUN chown jenkins:jenkins /opt/maven;
+ENV MAVEN_HOME=/opt/mvn
+USER jenkins
+######
+######### FIN NO FUNCIONO MAVEN #############
+
+docker image ls
+
+docker run -d -p 8080:8080 -p 50000:50000 --name jenkins jenkins-cicd
+-d (lo ejecuta en segundo plano)
+-p (puertos)
+--name jenkins (nombre del contenedor)
+jenkins-cicd (nombre de la imagen)
+
+docker ps -a (visualizar contenedores activos)
+
+ingresar al dashboard mediante localhost:8080 dentro de la virtual
+
+docker logs jenkins
+
+y nos dara un log para sacar la contraseña para ingresar al dashboard de jenkins
+
+"35d12a719ae44fc4a3d75b0ffbf2e967"

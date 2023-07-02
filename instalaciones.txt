@@ -10,7 +10,16 @@ sudo systemctl status ssh
 
 sudo apt-get install net-tools
 
+######### OPCIONAL INSTALAR WEBADMIN para gestionar el servidor desde el nevegador en windows de manera remota #########
 
+sudo apt update
+sudo apt install wget apt-transport-https
+wget http://www.webmin.com/download/deb/webmin-current.deb
+sudo dpkg -i webmin-current.deb
+sudo apt --fix-broken install
+https://TU_IP_UBUNTU:10000/
+
+#########################
 
 
 sudo apt-get update
@@ -79,7 +88,7 @@ minikube status
 
 [opcional]minikube stop (para detener)
 minikube dashboard --url (lanzar el dashboard)
-(esta funcionalidad arranco al tirar todos los comandos anteriores desde la consola de ubunto dentro del sistema operativo a comparación de las otras 2 veces anteriores que realice todo por putty, la maquina virtual en este caso se realizo con una red de tipo bridge)
+(esta funcionalidad arranco al tirar todos los comandos anteriores desde la consola de ubunto dentro del sistema operativo a comparación de las otras 2 veces anteriores que realice todo por putty, la maquina virtual en este caso se realizo con una red de tipo bridge sin el replicate)
 
 
 
