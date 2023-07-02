@@ -942,3 +942,79 @@ docker logs jenkins
 y nos dara un log para sacar la contraseña para ingresar al dashboard de jenkins
 
 "35d12a719ae44fc4a3d75b0ffbf2e967"
+
+(para ejecutar el contenedir si apagaste la pc)
+docker start f5356f913894 (es el id del contenedor)
+
+########### PROYECTO 01 Jenkins ###########
+
+configurar en github que los repositorios nuevos se creen con la rama principal llamada "master" ya que default viene "main"
+
+crear un nuevo repositorio privado llamando devops repo-devops3
+
+crear una carpeta llamada "repo-devops3" dentro del servidor en el cual vamos a cargar los archivos que se encuentran en 
+archivos/jenkins_p1
+
+una ves que estemos en el directorio "repo-devops3"
+
+git init
+
+////// SALIDA //////////
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint:   git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint:   git branch -m <name>
+Initialized empty Git repository in /home/osboxes/devops/jenkins/repo-devops3/.git/
+/////////////////////
+
+git add . (para agregar todo el contenido al repo)
+git commit -m "Start new repository" (guardar los cambios)
+git branch (para verificar la rama)
+git remote add origin https://github.com/Braian-92/repo-devops3.git
+git push -u origin master (nos pedira el usuario y la clave generada del tocken de git)
+
+(si cargamos el repor en github desktop en windows tirando un fetch veremos los cambios cargados directamente en la master)
+
+######## JOBS en jenkins #########
+ahora crear una nueva tareal libre en jenkins desde el dashboard "devops_test1"
+en source code management elegimos git
+
+buscamos el link https de github para clonarlo
+"https://github.com/Braian-92/repo-devops3.git" y lo pegamos en la url que pide el jenkins
+luego en credenciales seleccionamos el grupo de jenkins
+completar username con el usuario del tocken
+poner el usuario como secreto en el checker inferior
+y en password pegar la contraseña del tocken
+y en ID ponemos "github-udemy" (para poder reutilizar las credenciales nuevamente)
+en branch dejamos textual "master" (sin caracteres especiales "*")
+
+luego en la seccion de build enviroment en la parte de build steps
+seleccionamos invocar tareas de nivel superior de maven ("Invoke top-level Maven targets")
+en goals colocar "clean install"
+y en advanced POM => "billing/pom.xml" (colocamos el directorio del archivo POM)
+ya esta listo para realizar un build
+
+ahora entraremos al contenedor de jenkins
+docker exec -it jenkins /bin/bash 
+ahora buscamos en los logs de jenkins en la siguiente linea que indica el directorio del compilado
+"/var/jenkins_home/.m2/repository/com/paymentchain/billing/0.0.1-SNAPSHOT/"
+y lo ejecutamos dentro del contenedor con un 
+ls -ls /var/jenkins_home/.m2/repository/com/paymentchain/billing/0.0.1-SNAPSHOT/
+///////// SALIDA /////////////
+total 46772
+    4 -rw-r--r-- 1 jenkins jenkins      198 Jul  2 22:19 _remote.repositories
+46756 -rw-r--r-- 1 jenkins jenkins 47877684 Jul  2 22:19 billing-0.0.1-SNAPSHOT.jar
+    8 -rw-r--r-- 1 jenkins jenkins     5453 Jul  2 22:19 billing-0.0.1-SNAPSHOT.pom
+    4 -rw-r--r-- 1 jenkins jenkins      709 Jul  2 22:19 maven-metadata-local.xml
+////// FIN SALIDA ///////
+
+
+###### WEBHOOKS locales con NGROK (PROXY) ########
+registrarse en el sitio
+https://ngrok.com/
