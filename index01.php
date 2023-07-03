@@ -1013,8 +1013,79 @@ total 46772
     8 -rw-r--r-- 1 jenkins jenkins     5453 Jul  2 22:19 billing-0.0.1-SNAPSHOT.pom
     4 -rw-r--r-- 1 jenkins jenkins      709 Jul  2 22:19 maven-metadata-local.xml
 ////// FIN SALIDA ///////
-
+exit (para salir del contenedor)
 
 ###### WEBHOOKS locales con NGROK (PROXY) ########
-registrarse en el sitio
-https://ngrok.com/
+
+######### METODO NO FUNCIONAL SALTEAR ###################################################################
+######### METODO NO FUNCIONAL SALTEAR ###################################################################
+      registrarse en el sitio
+      https://ngrok.com/
+      tutorial para instalarlo
+      https://www.youtube.com/watch?v=17pdBadnm4s
+
+      descargar el archivo situarlo en el servidor, descomprimirlo y ejecutar el siguiente comando con las credenciales que nos dio la web de NGROK
+
+      ngrok config add-authtoken XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      (NO FUNCIONO)
+
+      sudo cp ngrok /usr/local/bin   (nos recomiendan pasarlo a los binarios)[NO FUNCIONO]
+
+      ngrok config add-authtoken XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      ##### SALIDA ###
+      bash: /usr/local/bin/ngrok: cannot execute binary file: Exec format error
+      #########
+
+      cd $HOME 
+      cd /usr/local/bin/
+      ls -la
+      rm ngrok (eliminar)
+      rm -i ngrok/* (no fuinciono)
+      rm -f ngrok (no fuinciono)
+      ///SALIDA// no funciono eliminarlo de los binarios
+      rm: remove write-protected regular file 'ngrok'?
+      //////
+
+######### FIN METODO NO FUNCIONAL SALTEAR ###################################################################
+######### FIN METODO NO FUNCIONAL SALTEAR ###################################################################
+
+//////// Install ngrok via Apt
+https://ngrok.com/download
+(este nos salio con los comandos de linux por que ingresamos desde la maquina virtual del servidor)
+
+curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && sudo apt update && sudo apt install ngrok
+
+snap install ngrok
+ngrok config add-authtoken XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+/// SALIDA //
+ngrok config add-authtoken 2S2GjVajjsFHOtvLUwRFpuqpKbR_47bnRafqC7gCE3ZtKYNN7
+/////////////////////
+ngrok http 8080  (para enlazarlo con el puerto del jenkins)
+
+////////// SALIDA //////////
+Announcing ngrok's Kubernetes Ingress Controller: https://ngrok.com/s/k8s-ingress                                                  
+Session Status                online                                              
+Account                       MIUSUARIO (Plan: Free)                                   
+Version                       3.3.1                                              
+Region                        South America (sa)                                     
+Latency                       31ms                                                 
+Web Interface                 http://127.0.0.1:4040                               
+Forwarding                    https://LIKN_QUE_QUE_NOS_DA/ -> http://localhost:8080                      
+Connections                   ttl     opn     rt1     rt5     p50     p90          
+                              0       0       0.00    0.00    0.00    0.00
+//////////////////////////////
+(CUIDADO: cerre la consola de ngrk y para abrila nuevamente ejecute este comando (ngrok http 8080 ) dandome otra direccion y ahora no anda ninguna de las 2)(PD lo cerre ejecutando control + c para copiar la salida y documentarla[y ahi rompi la primera instancia])
+
+de aca usaremos el link de https
+e iremos a github.com ingresaremos en nuestro repo y en setting agregaremos un nuevo webhook
+hay link concatenarle el siguiente string "github-webhook/"
+de tipo aplication json
+dejar chekeado en just push event (que golpee la api cuando se realice un pull)
+si vamos a la consola de ngrok veremos que se envio un "post 200 ok"
+agregar la carpeta "angularWorkSpace" en "/home/osboxes/devops/jenkins/repo-devops3/" para publicarlo en el repo
+
+cd /devops/jenkins/repo-devops3 (para alojarnos en el repo en disco)
+git add . (para establecer que todo nuevo contenido se va a publicar)
+git branch (para validar que estamos sobre la master)
+git commit -m "se publicara el proyecto de angular"
+git push -u origin master (nos pediras las credenciales del token)
