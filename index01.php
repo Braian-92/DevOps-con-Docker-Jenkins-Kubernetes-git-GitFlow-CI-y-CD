@@ -1089,3 +1089,50 @@ git add . (para establecer que todo nuevo contenido se va a publicar)
 git branch (para validar que estamos sobre la master)
 git commit -m "se publicara el proyecto de angular"
 git push -u origin master (nos pediras las credenciales del token)
+
+
+############## TEST LAMP ###########################################################
+############## TEST LAMP ###########################################################
+TUTORIAL 
+
+https://www.youtube.com/watch?v=v-r_12oezds
+
+mkdir lamp-docker (creamos la nueva carpeta)
+cd lamp-docker
+git clone https://github.com/jersonmartinez/docker-lamp.git
+cd docker-lamp (la carpeta que genera el repo)
+
+####### OPCIONAL INSTALAR IDE visual studio code ###########
+
+https://phoenixnap.com/kb/install-vscode-ubuntu
+sudo snap install --classic code // SALIDA "code 695af097 from Visual Studio Code (vscode✓) installed"
+code --version
+######################
+
+podemos acceder al codigo del LAMP para visualizar el proyecto
+code . (para abrir la carpeta en el editor de codigo)
+
+docker compose up -d (lo creara en background a los 3 contenedores)
+docker ps
+
+
+
+docker ps (visualizar contenedores corriendo)
+localhost:80 (para ingresar al sitio ejemplo)
+localhost:8000 (para ingresar al phpmyadmin) [credenciales del phpmyadmin = root - test]
+
+192.168.1.47:80 es accesible desde la red
+192.168.1.47:8000 es accesible desde la red
+
+######### integrar Crashell como proyecto lamp en el contenedor multiple #####
+https://www.crashell.com
+
+cd www
+ls -la (visualizar contenido del directorio)
+git clone (https de algun repo que quieras usar)
+
+docker compose down ( para deliminar todos los contenedores )
+docker compose up -d (para volver a inicializar todo)
+(recordar que los volumenes son externos, entonces la información por ejemplo de la base de datos ya no es volátil)
+[archivos del ejemplo en archivos/docker-lamp-main]
+############## FIN TEST LAMP ###########################################################
