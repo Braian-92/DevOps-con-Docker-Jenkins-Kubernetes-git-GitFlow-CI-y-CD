@@ -1194,3 +1194,70 @@ y en advanced POM => "billing/pom.xml" (colocamos el directorio del archivo POM)
 ya esta listo para realizar un build
 
 ir a github.com a el repo y entrar con settings y Webhooks / Manage webhook (para visualizar las salidas que realizo en el historico)
+
+al realizar un comit sobre la master el ngrok nos dara este mensaje
+"POST /github-webhook/ 200 OK"
+si vamos al visor del webhook del repo veremos este mansaje
+"9e200e26-1a1c-11ee-8253-1c099215e698 push…2023-07-04 00:41:11"
+si revisamos el pipeline compilo correctamente
+
+//////////////// PROYECTO 2 jenkins github ######################
+utilizando la tarea anterior editamos y desactivamos el siguiente campo
+[desactivar] GitHub hook trigger for GITScm polling
+ahora en git => Additional Behaviours => custom user email adress
+user.name => jenkins
+user.email => admin@admin.com
+(esta cuenta es necesaria para informar quien fue el que realizo el push al repo)
+luego en ejecutar donde se encuetra en pom de maven crear una nueva accion de shell ("Build Steps")
+git branch (ver en el log en que rama esta)
+git checkout master (para que nos traiga todos los cambios de la rama master)
+git merge origin/feature/addtest (realizar un merge de la rama que estamos enviando)
+(realizar una rama feature/addtest en github desktop )
+cambiar en brach to build "*/master" por "origin/feature/addtest"
+
+en "Acciones para ejecutar después."
+Git Publisher (esto nos permite ejecutar comandos de git al repositorio remoto) 
+  => checkear "Push Only If Build Succeeds" (solo hace el push si fue exitoso)
+  Branches => 
+    Branch to push => master
+    Target remote name => origin
+(aplicar y guardar)
+ir al pipeline y en espacio de trabajo limpiar los residuos ("limpiar el espacio de trabajo")
+
+vamos a la rama "feature/addtest" realizamos y comiteamos un cambio minimo
+y creamos un pull request (esto nos enviara al sitio para colocar el mensaje y enviarlo github.com utilizando antes github desktop)
+
+EJECUTAMOS
+
+###################### SALIDA ###################
+Branch 'master' set up to track remote branch 'master' from 'origin'.
++ git merge origin/feature/addtest
+Updating a215b6f..7a5696c
+Fast-forward
+ test_webhook.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+The recommended git tool is: NONE
+using credential fd404253-20e3-4016-a7ba-acfa2ed939ca
+Pushing HEAD to branch master at repo origin
+ > git --version # timeout=10
+ > git --version # 'git version 2.30.2'
+using GIT_ASKPASS to set credentials 
+ > git push https://github.com/Braian-92/repo-devops3.git HEAD:master # timeout=10
+Finished: SUCCESS
+###############################################
+
+si vamos a la master podremos validar que los cambios se mergearon correctamente
+
+PAGINA PLUGINS JENKINS: https://plugins.jenkins.io/
+
+##################### INTEGRACIÓN CON SLACK ###################
+
+https://slack.com/intl/es-ar/ (registrarse)
+
+crear cuenta (yo ingrese con google) y crear un nombre de organización 
+ir a explorar slark => aplicaciones
+buscamos jenkins CI
+agregar => agregar slark => elegir el canal que creamos
+add jenkins ci integration
+
+vamos al dashboardde jenkins y en administrar plugins e instalamos "slak notification"
