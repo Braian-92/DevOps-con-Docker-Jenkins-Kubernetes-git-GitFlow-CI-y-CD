@@ -329,7 +329,7 @@ cuando finalice ingresar directamente sin puerto "192.168.1.45"
 
 ####### LOGIN DOCKER HUB ############
 hay que ingresar a docker hub y te indica que comando utilizar para conectarte
-cuando en seguridad se crea un tocken para ingresar
+cuando en seguridad se crea un TOKEN para ingresar
 PD: aunque mi usuario sea BraianZamudio me pide que ingrese con todo en minuscula
 
 docker login -u braianzamudio -p __TOKEN__ (funcional)
@@ -821,10 +821,10 @@ git config --global user.name "Udemy prueba"
 git config --global user.email "braian@braianzamudio.com"
 git config --list
 
-############### generar tocken en github ###############
-perfil => settings => developer settings => personal access tockens => classic
-generate new tocken clasic => validar con el celular
-NOTE => tocken devops2 => todos los permisos chequeables
+############### generar TOKEN en github ###############
+perfil => settings => developer settings => personal access TOKENs => classic
+generate new TOKEN clasic => validar con el celular
+NOTE => TOKEN devops2 => todos los permisos chequeables
 ############################################################
 
 ejemplo clonar repo
@@ -859,7 +859,7 @@ git push -u origin main
 git remote add origin https://github.com/usuario/repositorio
 git push -u origin master
 
-colocar usuario y contraseña de github (el nombre del tocken y el tocken)
+colocar usuario y contraseña de github (el nombre del TOKEN y el TOKEN)
 
 git branch feature/cs-2356847 master (crear una nueva rama)
 git branch (nos salen ambas ramas [el asterisco señala donde estamos])
@@ -978,7 +978,7 @@ git add . (para agregar todo el contenido al repo)
 git commit -m "Start new repository" (guardar los cambios)
 git branch (para verificar la rama)
 git remote add origin https://github.com/Braian-92/repo-devops3.git
-git push -u origin master (nos pedira el usuario y la clave generada del tocken de git)
+git push -u origin master (nos pedira el usuario y la clave generada del TOKEN de git)
 
 (si cargamos el repor en github desktop en windows tirando un fetch veremos los cambios cargados directamente en la master)
 
@@ -989,9 +989,9 @@ en source code management elegimos git
 buscamos el link https de github para clonarlo
 "https://github.com/Braian-92/repo-devops3.git" y lo pegamos en la url que pide el jenkins
 luego en credenciales seleccionamos el grupo de jenkins
-completar username con el usuario del tocken
+completar username con el usuario del TOKEN
 poner el usuario como secreto en el checker inferior
-y en password pegar la contraseña del tocken
+y en password pegar la contraseña del TOKEN
 y en ID ponemos "github-udemy" (para poder reutilizar las credenciales nuevamente)
 en branch dejamos textual "master" (sin caracteres especiales "*")
 
@@ -1173,9 +1173,9 @@ API URL => "DEFAULT QUE APARECE"
 en credenciales poner add jenkins
 kind => secret text
 scope => DEFAULT
-secret => TOCKEN GIT
+secret => TOKEN GIT
 (colocar add y seleccionar el secret text guardado)
-(hacer clic en test conection y le tiene que salir algo asi) // SALIDA "Credentials verified for user Braian-92, rate limit: 4998"
+(hacer clic en test connection y le tiene que salir algo asi) // SALIDA "Credentials verified for user Braian-92, rate limit: 4998"
 aplicar y guardar
 
 
@@ -1184,7 +1184,7 @@ github proyect => https://github.com/Braian-92/repo-devops3 (url del repo, es la
 
 Configurar el origen del código fuente => git => https://github.com/Braian-92/repo-devops3.git [esta si es para clonar]
 en credenciales agregamos nuevamente jenkins y agregamos
-Kind => usuario y contraseña (usuario de tocken y tocken)
+Kind => usuario y contraseña (usuario de TOKEN y TOKEN)
 y la seleccionamos
 dejar master
 [activar] GitHub hook trigger for GITScm polling
@@ -1258,6 +1258,60 @@ crear cuenta (yo ingrese con google) y crear un nombre de organización
 ir a explorar slark => aplicaciones
 buscamos jenkins CI
 agregar => agregar slark => elegir el canal que creamos
-add jenkins ci integration
+[IMPORTANTE] add jenkins ci integration [IMPORTANTE] (no cerrar la pestaña) [IMPORTANTE]
 
-vamos al dashboardde jenkins y en administrar plugins e instalamos "slak notification"
+vamos al dashboard de jenkins y en administrar plugins e instalamos "slack notification"
+si no se prende ejecutar el siguiente comando del contenedor para prenderlo
+
+docker start jenkins
+http://localhost:8080/ (ingresar nuevamente)
+
+administrar jenkins => System => Slack =>
+en la pestaña que no cerramos del navegador integrado jenkins con slark
+copiar el "Team Subdomain (Subdominio de equipo): krateros-design" ("krateros-design")
+para pegarlo en el workspace de configuración de jenkins slack
+en credenciales agregamos una de jenkins => secret text => pegar el TOKEN que nos da (la pestaña que no cerramos)
+colocar add y si aparecen muchos seleccionar el ultimo
+ejecutar un test connection y nos tiene que salir "Success"
+(apply y guardar)
+
+en el ultimo proyecto que realizamos para mergear las ramas automaticas de git, lo editamos y agregamos lo siguente
+
+acciones para ejecutar despues => (nueva) slack notification
+checkear todo y guardar
+ir a la rama feature/addtest realizar un cambio, realizar un commit y un pull request
+
+ahora vamos al pipeline e ingresamos a la zona de trabaja (el gestor de carpetas que muestra lo que genero)
+y llegar a este directorio para copiarlo
+
+"webhooks_pipeline/billing/target/surefire-reports/"
+#### ERROR ######
+'webhooks_pipeline/billing/target/surefire-reports/*.xml' no coincide con nada, pero 'billing/target/surefire-reports/*.xml' sí. Quizas es lo que quieres decir.
+no hay que colocar "webhooks_pipeline/"
+#### FIN ERROR ######
+vamos a configurar nuevamente y en acciones para ejecutar despues
+
+"Publicar los resultados de tests JUnit"
+Ficheros XML con los informes de tests => "billing/target/surefire-reports/*.xml" 
+(apply y guardar) [ejecutar]
+
+######## SALIDA SLACK ##### (los multiples mensajes son por que el principio fallo por el directorio del reporte)
+
+Slack/Jenkins plugin: you're all set on http://localhost:8080/
+2:20
+Slack/Jenkins plugin: you're all set on http://localhost:8080/
+
+jenkins
+Aplicación  2:34
+webhooks_pipeline - #5 Lanzada por el usuario admin (Open)
+2:34
+webhooks_pipeline - #5 Failure after 14 Seg (Open)
+2:35
+webhooks_pipeline - #6 Lanzada por el usuario admin (Open) [http://localhost:8080/job/webhooks_pipeline/6/display/redirect]
+2:35
+webhooks_pipeline - #6 Back to normal after 1 Min 27 Seg (Open)
+
+#######################################
+
+esos mensajes de open nos dan accesos directos a los reportes de errores (en la cual podemos ver el detalle del error)
+al tener JUnit ahora tenemos un reporte grafico que nos muestra el detalle de las ejecuciones 
