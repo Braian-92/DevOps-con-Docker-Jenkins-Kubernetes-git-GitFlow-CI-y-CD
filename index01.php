@@ -361,6 +361,7 @@ Esto lo aclaramos por que al recrear un contenedor necesitamos que el volumen se
 ######### PROYECTO 02 docker java angular postgres #########
 
 docker ps -a (listar contenedores)
+docker kill $(docker ps -q) (detener todos los contenedores)
 docker system prune (eliminar todos los contenedores)
 docker image ls (listar las imagenes)
 docker image prune (eliminar todas las imagenes)
@@ -1136,3 +1137,60 @@ docker compose up -d (para volver a inicializar todo)
 (recordar que los volumenes son externos, entonces la información por ejemplo de la base de datos ya no es volátil)
 [archivos del ejemplo en archivos/docker-lamp-main]
 ############## FIN TEST LAMP ###########################################################
+
+
+############ VOLVER A PRENDER JENKINS ############
+
+### PRIMERO ELIMINAMOS TODO ######
+docker ps -a (listar contenedores)
+docker kill $(docker ps -q) (detener todos los contenedores)
+docker system prune (eliminar todos los contenedores)
+docker image ls (listar las imagenes)
+
+(ya que todavia contamos con la imagen, vamos a realizar nuevamente el contenedor que fallo con las pruebas, al parecer usaban el mismo puerto)
+
+docker run -d -p 8080:8080 -p 50000:50000 --name jenkins jenkins-cicd
+docker logs jenkins (para sacar la clave inicializadora) "5897fb1dd7d94f78a0f829384e2e60d3"
+localhost:8080 
+
+docker start jenkins (prender un contenedor apagado, cuando instalas un plugin y queda exited)
+
+######## PONER JENKINS en español #####
+descargar el plugin locale, ir a configuración y poner forzar lenguaje y colocar "es"
+######## FIN PONER JENKINS en español #####
+
+link ngrok actual https://9a5f-179-36-157-250.ngrok-free.app/github-webhook/
+
+despues de agregar el webhook ir a jenkins 
+Panel de Control
+Administrar Jenkins
+System
+GitHub
+GitHub Servers
+
+name => "cuenta personal"
+API URL => "DEFAULT QUE APARECE"
+en credenciales poner add jenkins
+kind => secret text
+scope => DEFAULT
+secret => TOCKEN GIT
+(colocar add y seleccionar el secret text guardado)
+(hacer clic en test conection y le tiene que salir algo asi) // SALIDA "Credentials verified for user Braian-92, rate limit: 4998"
+aplicar y guardar
+
+
+crear una nueva tarea webhooks_pipeline de estilo libre
+github proyect => https://github.com/Braian-92/repo-devops3 (url del repo, es la del navegador al ingresar)[ACLARO QUE NO ES LA https para clonar]
+
+Configurar el origen del código fuente => git => https://github.com/Braian-92/repo-devops3.git [esta si es para clonar]
+en credenciales agregamos nuevamente jenkins y agregamos
+Kind => usuario y contraseña (usuario de tocken y tocken)
+y la seleccionamos
+dejar master
+[activar] GitHub hook trigger for GITScm polling
+
+en goals colocar "clean install"
+y en advanced POM => "billing/pom.xml" (colocamos el directorio del archivo POM)
+ya esta listo para realizar un build
+
+ir a github.com a el repo y entrar con settings y Webhooks / Manage webhook (para visualizar las salidas que realizo en el historico)
