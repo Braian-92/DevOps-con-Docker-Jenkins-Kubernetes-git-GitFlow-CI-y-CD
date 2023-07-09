@@ -1315,3 +1315,79 @@ webhooks_pipeline - #6 Back to normal after 1 Min 27 Seg (Open)
 
 esos mensajes de open nos dan accesos directos a los reportes de errores (en la cual podemos ver el detalle del error)
 al tener JUnit ahora tenemos un reporte grafico que nos muestra el detalle de las ejecuciones 
+
+
+################### SONARQUBE ####################
+
+docker pull sonarqube (lo instala directamente de docker hub)
+--(no funciono)docker run -d --name sonarqube -p 9000:9000 -p 9092:9092 sonarqube
+docker run -d -p 9000:9000 -p 9092:9092 --name sonarqube sonarqube (levantar el contenedor a partir de la imagen)
+docker ps -a (revisar que jenkins y sonarqube esten corriendo)
+docker start jenkins (para prenderlo ya que tenia la maquina apagada)
+localhost:8080 (jenkins) [no accesible en la red  http://192.168.1.47:8000]
+docker network create jenkins_sonarqube (crear una red para comunicar los 2 contenedores)
+docker network ls (visualizar las redes disponibles en docker)
+docker network connect jenkins_sonarqube sonarqube (conectar contenedor sonarqube a la red)
+docker network connect jenkins_sonarqube jenkins (conectar contenedor jenkins a la red)
+docker container inspect sonarqube (visualizaremos que los 2 estan en la nueva red jenkins_sonarqube)
+docker container inspect jenkins (visualizaremos que los 2 estan en la nueva red jenkins_sonarqube)
+localhost:9000 (sonarqube) [accesible en la red http://192.168.1.47:9000/projects/create]
+admin - admin (nos pedira cambiar la clave le pondremos admin1)
+--> administración -> seguridad -> usuarios
+-> vamos a ver un icono de una lista a la derecha del usuario admin indicando 0 tokens vamos a crear uno para usarlo en jenkins
+jenkins = squ_6506844add08e5834ea71e8758e9d5e5b0f10c93
+
+instalar en jenkins => sonarQube Scanner
+administrar jenkins => configurar sistema => SonarQube Servers
+[checkear] (Environment variables
+Enable injection of SonarQube server configuration as build environment variables )
+add sonarQube => 
+  -> name = sonarqubetest
+  -> url servidor = http://sonarqube:9000
+  (en caso de usar una maquina remota cambiar sonarqube (nombre contenedor) por el ip remoto del serv)
+  - add = agregar token 
+  (en el caso de que no deje agregar la credencial dirigirse a)
+   (nombre de usuario [superior derecha{admin}]) --> panel de control -> credentials -> system -> global credentials
+   ###### detalle ####
+   nos va a aparecer unas pestañas, en la primera (Credentials) y en el ultimo item que dice, 
+   "System   - - -- - - -  (global)", al parecer es una contraseña guardada anteriormente, hacer clic en "System" y luego en "Global credentials (unrestricted)" y en este lugar ya nos aparecera el add credentials
+   ###### FIN detalle ####
+
+    --> add credentials
+      -> kind = secret text
+      -> scope [default]
+      -> secret = [tocken] => squ_6506844add08e5834ea71e8758e9d5e5b0f10c93
+      -> id = sonarqube
+       (ahora volvemos a realizar los pasos anteriores y la credencial sonarqube aparecera en el desplegable)
+       (aplicar y guardar)
+
+
+### configuración 02
+
+--> configuración jenkins --> global tools configuration --> SonarQube Scanner (textual por que hay 2)
+  --> añadir sonar scanner
+    -> nombre = sonarscaner
+    -> [checker] instalar automaticamente
+    (aplicar y guardar)
+
+vamos a la tarea anterior que comunicaba con github "webhooks_pipeline"
+agregar una "Build Steps" "execute sonarqube scanner"
+task run = "scan"
+JDK = [default]
+snalysis properties = "
+sonar.projectKey=sonarqube (crear nombre del proyecto)
+sonar.sources=billing/src/main/java (clases a analizar)
+sonar.java.binaries=billing/target/classes (indicar dir binarios)"
+Aditional arguments = "-X" (prende el debugging)
+(en los cubitos de la esquina de la pestaña subirlo como accion principal)
+
+####### ERROR EN "sonar.projectKey" ##########
+sonar.host.url=http://sonarqube:9000
+sonar.sourceEncoding=UTF-8
+sonar.projectKey=sonarqube
+sonar.sources=billing/src/main/java
+sonar.java.binaries=billing/target/classes
+
+########### al parecer solo es un warning #######
+
+si ingresamos al dashboard de sonarqube vemos el detalle del testeo realizaro en el pipeline
