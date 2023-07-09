@@ -1391,3 +1391,84 @@ sonar.java.binaries=billing/target/classes
 ########### al parecer solo es un warning #######
 
 si ingresamos al dashboard de sonarqube vemos el detalle del testeo realizaro en el pipeline
+
+
+######## CREAR IMAGENES AUTOMATICAMENTE de docker hub con docker engine ############
+
+instalar plugin "CloudBees Docker Build and Publish"
+
+
+ir al pipeline de integración de git y sonar y colocar en maven 
+Goles --> clean test install
+agregar un nuevo paso en ejecutar "Docker build and Publish"
+Repository name = usar un repo de docker hub "sotobotero/billingapp-backend"
+-> evanzado
+  -> build context = "billing/" (indica donde esta el dockerfile)
+  -> aditional Build Arguments = --build-arg JAR_FILE=target/*.jar
+TAG = 0.0.1
+Docker Host URI = 
+  ##### COMUNICAR MOTOR DOCKER #####
+  ip route show default | awk '/default/ {print $3}' (nos retorna una ip)(pero lo usamos para hacer un puente entre las 2 redes)
+
+  ip a (buscar Docker0 vamos a usar la inet) para que el contenedor de jenkins se pueda conectar al motor de docker
+  ##### COMUNICAR MOTOR DOCKER #####
+
+Docker Host URI =  tcp://__IP-INET-DOCKER0__:2375
+  ##### COMUNICAR MOTOR DOCKER 2 #####
+    sudo nano /lib/systemd/system/docker.service (buscar donde tengamos instalado el docker engine)
+    (enter)
+    buscar en [Service] "ExecStart" duplicar y comentar el default y colocar el siguiente
+      ExecStart=/usr/bin/dockerd -H fd:// -H=tcp://0.0.0.0:2375
+    exponer el servicio que sea accesible a travez de la red mediante el protocolo tcp dentro de esta url (el link anterir es la url que se va a utilizar para relizar la comunicación)
+
+    sudo systemctl daemon-reload
+    sudo service docker restart
+    curl http://localhost:2375/images/json (verificar si podemos verificar las imagenes mediante la api que abrimos)
+
+  ##### COMUNICAR MOTOR DOCKER 2 #####
+
+Registry Credentials = (agregar credenciales de docker hub)
+  -> kind = user with password
+     username = $usuarioDockerHub
+     password = __$contraseñaDockerHub__
+     ID = dockerhub
+     Descripcion = dockerhub
+(seleccionar la credencial)
+(apply y guardar)
+con esto ya tenemos toda la configuración necesaria de jenkins para comunicarse con el ENGINE de docker
+
+(ejecutamos y se publicara la imagen en docker-hub)
+
+
+########## Plugin KUBERNETES en jenkins ##########
+(poder hacer despliegue de una imagen de dockerhub en cluster de kubernetes)
+
+docker ps (buscar que exista minikube)
+docker exec -it  --user=root jenkins /bin/bash (conectarnos al contenedor de jenkins para entrar como usuario rut y realizar instalaciones)
+
+y realizar los pasos (###### instalar kubectl #########) de la linea 537 para instalar kyubectl
+
+kubectl version --client (verificar que se instalo minikube en el contenedor de jenkins)
+exit (desconectarnos del contenedor)
+
+######### conectar contenedor de jenkins a la misma red de minikube ########
+docker network ls (busvar minikube)
+docker network connect minikube jenkins (minikube=> nombre red, jenkins => el contenedor que queremos conectar)
+docker container inspect jenkins (verificar si se encuentran en la misma red en networks)
+
+[OPCIONAL REVERTIR] docker network disconnect minikube jenkins 
+
+instalar en jenkins el plugin textual "Kubernetes"
+
+el archivo "jenkins-account.yaml" genera un tocken con esta cuenta para poder acceder desde jenkins al cluster de kubernetes
+el archivo "deployment-billing-app-back-jenkins.yaml" es para el deployment del servicio del backend que es la imagen que generamos anteriormente y expone el servicio
+el archivo "jenkinsfile" es un declarativo de un pipeline
+
+estos 3 archivos hay que ponerlos en un repositorio propio
+
+ir al directorio donde descargamos el repo creado y trabajar sobre este archivo ("jenkins-account.yaml") de la siguiente manera
+
+kubectl apply -f jenkins-account.yaml
+kubectl config view
+  buscar la siguiente información
+  -> certificate-authority, server (si mandamos esta direccion nos dara un 403 en el navegador)
