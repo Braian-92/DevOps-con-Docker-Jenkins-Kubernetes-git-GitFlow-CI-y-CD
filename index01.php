@@ -882,7 +882,7 @@ Entrega continua: pasar a productivo los cambios
 
 Pipeline: Grupo logico de actividades que de manera conjunta realizan una tarea
 Jenkins: Servidor de automatización open source
-Slark: Plataforma propietaria de comunicación empresarial (Caracteristica mas relevante channel)
+slack: Plataforma propietaria de comunicación empresarial (Caracteristica mas relevante channel)
 SonarQube: Plataforma opensource para la implementación continua de la calidad del código, puede ejecutar revisiones en automático.
 Selenium: Framework para probar aplicaciónes web, permite escribir test funcionales de manera sensilla.
 
@@ -1255,9 +1255,9 @@ PAGINA PLUGINS JENKINS: https://plugins.jenkins.io/
 https://slack.com/intl/es-ar/ (registrarse)
 
 crear cuenta (yo ingrese con google) y crear un nombre de organización 
-ir a explorar slark => aplicaciones
+ir a explorar slack => aplicaciones
 buscamos jenkins CI
-agregar => agregar slark => elegir el canal que creamos
+agregar => agregar slack => elegir el canal que creamos
 [IMPORTANTE] add jenkins ci integration [IMPORTANTE] (no cerrar la pestaña) [IMPORTANTE]
 
 vamos al dashboard de jenkins y en administrar plugins e instalamos "slack notification"
@@ -1267,7 +1267,7 @@ docker start jenkins
 http://localhost:8080/ (ingresar nuevamente)
 
 administrar jenkins => System => Slack =>
-en la pestaña que no cerramos del navegador integrado jenkins con slark
+en la pestaña que no cerramos del navegador integrado jenkins con slack
 copiar el "Team Subdomain (Subdominio de equipo): krateros-design" ("krateros-design")
 para pegarlo en el workspace de configuración de jenkins slack
 en credenciales agregamos una de jenkins => secret text => pegar el TOKEN que nos da (la pestaña que no cerramos)
@@ -1472,3 +1472,99 @@ kubectl apply -f jenkins-account.yaml
 kubectl config view
   buscar la siguiente información
   -> certificate-authority, server (si mandamos esta direccion nos dara un 403 en el navegador)
+kubectl -namespace default get serviceaccount
+kubectl -namespace default get serviceaccount jenkins -o yaml (nos permite ver los detalles del serviceaccount)
+(de aca sacar el nombre)
+kubectl describe secrets/jenkins-token-rk2mg (jenkins-token-rk2mg esto es el nombre sacado con el paso anterior)
+(en este paso sacamos el tocken para conectarnos a la api del cluster de kubernetes)
+
+agregamos esta credencial a jenkins 
+secret text = $TOKEN
+ID=kubernetes-jenkis-server-account (este ID se usa en el pipeline declarativo)
+desccripcion=kubernetes
+
+ahora vamos a configurar en jenkins
+administrar jenkins -> administrar sistema -> (pestaña final) Cloud => "a separate configuration page" 
+-> añadir una nube -> seleccionamos la credencial de kubernetes que generamos en el paso anterior
+  -> kubernetes cloud details 
+    -> Kubernetes url = 192.168.49.2:8443 (esto lo sacamos con el comando visto anteriormente "kubectl config view" [SERVER])
+    Kubernetes server cerrificate key => (se saca del mismo comando anterior "kubectl config view") en la sección certificate-authority, el cual nos da un directorio de un archivo que contendra el token dentro
+      --> verificar contenido de archivo (nano /xxx/yyy/archivo) (cat /xxx/yyy/archivo)
+    [checkear]disable https certificate check
+    credentials = (el de kubernetes nuevamente) y lanzamos un test connection
+
+#### crear pipeline conectado con la api de kubernetes #####
+
+crear nueva tarea libre
+nombre = deploy_k8s
+tipo = pipeline
+[checkear] github proyect
+  -> url = pegar el repo que creamos
+pipeline => definition => pipeline script from SCM
+  -> SCM = GIT
+    -> repository url => nuevamente el repo
+    -> credentials => las credenciales de git
+    -> branch = master
+script path => "jenkinsfile"
+(apply guardar)
+
+descargara el repo y ejecutara el pipeline que se encuentra dentro y esto va a realizar un deploy en la aplicación dentro del cluster de kubernetes
+si vamos al dashboard de kubernetes veremos que se desplego el nuevo servicio
+
+lanzar comando "minikube ip" y si lanzamos la ip en el navegador podremos entrar al servicio agregandole el puerto que colocamos en el yaml agregarle el sigiente fragmento 123.123.1.1:31780/swagger-ui/index.html
+
+
+######### MONITORIZACIÓN CON PROMETEUS Y GRAFANA ############
+
+kubectl get namespaces (visualizar los espacios disponibles)
+kubectl create namespace monitoring
+subir los archivos de la carpeta "archivos/monitoring" al servidor y situarse en la misma
+kubectl apply -f authotization-prometeus.yaml
+kubectl apply -f configmap-prometheus.yaml
+kubectl apply -f deployment-prometheus.yaml
+
+kubectl get all --namespace=monitoring (nos muestra los servicios que estan corriendo internamente)
+minikube ip (copiamos la ip de minikube y utilizamos el puerto del servicio de prometeus "30000")
+
+(una vez ingresado al dashboard podremos ver que en tarjets el servicio de metrics esta caido)
+para activar este servicio realizar el siguiente comando que ejecuta todos los yaml de la carpeta "kube-state-metrics"
+
+kubectl apply -f kube-state-metrics/
+
+si volvemos a prometeus => tarjets => veremos que metrics esta funcionando
+
+si queremos realizar configuraciones adicionales para incluir alertas nuevas agregarlos en el "configmap-prometheus.yaml"
+tirar un kubectl delete del deployment y volver a inicializarlo
+
+en el caso de que algun servicio marque falla entrar al dashboard de kubernetes, ingresar al por de namespace y verificar los logs
+
+##### ALERT MANAGER (modulo de prometeus de alertas) ########
+
+trabajar con la carpeta "archivos/monitoring/alert-manager/"
+
+01 - pvc-alert-manager.yaml (indica los volumenes persistentes)
+02 configmap-alert-manager.yaml (contiene la configuracion del servicio)
+  -> modificar el documento con el webhook de slack
+    -> ir a slack (pagina) => app => instalar "incoming webhooks"
+      -> seleccionar el canal que deseamos enlazar con el webhook
+        -> copiar el link que esta en la seccion que aparece como "Webhooks URL (send yourt json payloads to this url)"
+  (ahora nos aparece en slack) y como paso final agregar en el .yaml el nombre del canal que vamos a utilizar
+
+03- deployment-alert-manager.yaml (realiza la instalación del alert manager)
+
+kubectl apply -f alert-manager/ (ejecutar todos los yaml mencionados anteriormente)
+
+ingresando en el dashboard de kubernetes en services o pots los veremos activos
+o ingresando al puerto de minikube con el puerto 31000 (definido en el deploy)
+
+
+######### INTEGRAR GRAFANA A PROMETEUS ###########
+configmap-grafana.yaml (configuración front grafana)
+deployment-grafana.yaml (contenedor y servicio)
+
+kubectl apply -f grafana/
+
+ingresar por la ip de minikube y el puerto del deploy (32000) admin - admin
+
+ir al + de grafana => import (en el deploy hay 3 ejemplos de dashboard para descargar [solo poner el id]) 
+seleccionar prometeus en el campo prometeus
