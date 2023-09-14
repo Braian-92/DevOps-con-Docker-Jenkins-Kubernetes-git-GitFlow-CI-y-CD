@@ -101,3 +101,26 @@ apt-get install git
 git config --global user.name "Udemy prueba"
 git config --global user.email "braian@braianzamudio.com"
 git config --list
+
+
+## OPCIONAL INSTALAR FTP PARA CONEXION LOCAL ###
+
+sudo apt update
+sudo apt upgrade
+
+sudo apt install vsftpd
+
+sudo nano /etc/vsftpd.conf
+
+### verificar que esten descomentados e igual y si no existen crearlos
+write_enable=YES
+local_umask=022
+chroot_local_user=YES
+allow_writeable_chroot=YES
+###
+
+sudo systemctl restart vsftpd
+
+sudo ufw allow 21/tcp
+
+ingresar por filexilla o sftp usando la ip del servidor local y las credenciales del ubuntu al encender
