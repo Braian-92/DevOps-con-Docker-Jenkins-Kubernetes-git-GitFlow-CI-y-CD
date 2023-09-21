@@ -124,3 +124,10 @@ sudo systemctl restart vsftpd
 sudo ufw allow 21/tcp
 
 ingresar por filexilla o sftp usando la ip del servidor local y las credenciales del ubuntu al encender
+
+
+
+############## fix bloqueo de ubuntu de actualización e instalación
+https://serverfault.com/questions/1106694/unable-to-run-apt-update-on-ubuntu-21-10
+sudo sed -i -r 's/([a-z]{2}.)?archive.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
+sudo sed -i -r 's/security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
